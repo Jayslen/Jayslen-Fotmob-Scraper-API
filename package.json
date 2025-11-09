@@ -5,7 +5,7 @@
   "description": "A open source football API where the data are extract from Fotmob. The project is not intent to get beneficts with the data, its just for educational purpose and shared an API with dozens of people who wants to practice.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build/scraper": "tsc -p tsconfig.scraper.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
