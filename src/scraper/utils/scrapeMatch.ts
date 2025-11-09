@@ -1,5 +1,5 @@
 import { Response } from 'playwright'
-import { AllStat, ScrapeMatchData } from '../types/scraper.js'
+import { AllStat, FluffyStats, ScrapeMatchData } from '../types/scraper.js'
 
 export async function scrapeMatchResult(matchResponse: Response) {
   const json = (await matchResponse.json()) as ScrapeMatchData
@@ -97,7 +97,23 @@ export async function scrapeMatchResult(matchResponse: Response) {
           value: data.stats
         }))
       }))
-    }))
+    })),
+    playerMatchStats: Object.entries(json.content.playerStats).map(
+      ([key, data]) => ({
+        player: data.name,
+        stats: data.stats.flatMap((data) => {
+          return Object.entries(data.stats).map(([key, values]) => {
+            const currentStat = {
+              category: data.key,
+              key,
+              value: values.stat.value,
+              total: values.stat.total
+            }
+            return currentStat
+          })
+        })
+      })
+    )
   }
   return parsedData
 }
