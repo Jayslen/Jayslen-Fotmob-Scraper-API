@@ -54,10 +54,7 @@ export interface League {
   pageUrl: Link
 }
 
-// export enum LeagueName {
-//   FACup = 'FA Cup',
-//   PremierLeague = 'Premier League'
-// }
+export type LeagueName = string
 
 export enum Link {
   Leagues132OverviewFaCup = '/leagues/132/overview/fa-cup',
@@ -967,13 +964,15 @@ export interface HeaderEvents {
   awayTeamRedCards: AwayTeamGoals
 }
 
-export interface AwayTeamGoals {}
-
-export interface HomeTeamGoals {
-  Zirkzee: Zirkzee[]
+export interface AwayTeamGoals {
+  [key: string]: GoalScorer
 }
 
-export interface Zirkzee {
+export interface HomeTeamGoals {
+  [key: string]: GoalScorer
+}
+
+export interface GoalScorer {
   reactKey: string
   timeStr: number
   type: EventTypeEnum

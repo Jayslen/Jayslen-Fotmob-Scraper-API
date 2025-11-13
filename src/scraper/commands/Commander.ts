@@ -1,4 +1,4 @@
-import { scrapeMatchResult } from './scrapeMatch.js'
+import { scrapeMatchResult } from '../parse/parseMatchData.js'
 import { newPage } from '../utils/createNewPage.js'
 import { writeData } from '../utils/writeFiles.js'
 import { League, MatchParsed } from '../types/matchParsed.js'
@@ -19,12 +19,13 @@ export class Commands {
     for (let i = from; i <= to; i++) {
       const matchesRound: MatchParsed = {
         league: league.name as League,
-        round: i,
+        round: i + 1,
         season,
         matches: []
       }
+
       await page.goto(
-        `https://www.fotmob.com/leagues/${league.id}/matches/${league.acrom}?season=${season}&group=by-round&round=${i}`,
+        `https://www.fotmob.com/leagues/${league.id}/fixtures/${league.acrom}?season=${season}&group=by-round&round=${i}`,
         { waitUntil: 'load' }
       )
 
@@ -50,12 +51,12 @@ export class Commands {
         }
       }
       console.log(
-        `Matches for ${matchesRound.league} season ${season} round ${matchesRound.round + 1} scraped`
+        `Matches for ${matchesRound.league} season ${season} round ${matchesRound.round} scraped`
       )
       await writeData({
         data: matchesRound,
         dir: `matches/${league.acrom}/${season}`,
-        fileName: `/${league.acrom}-week-${matchesRound.round + 1}.json`
+        fileName: `/${league.acrom}-week-${matchesRound.round}.json`
       })
     }
     await browser.close()
