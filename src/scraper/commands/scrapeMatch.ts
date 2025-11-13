@@ -1,37 +1,51 @@
 import { Response } from 'playwright'
 import { AllStat, ScrapeMatchData } from '../types/scraper.js'
+import {
+  Card,
+  Description,
+  Key,
+  Match,
+  Period,
+  Reason,
+  StatKeyCategory,
+  Surface
+} from '../types/matchParsed.js'
 
 export async function scrapeMatchResult(matchResponse: Response) {
   const json = (await matchResponse.json()) as ScrapeMatchData
-  const parsedData = {
+  const parsedData: Match = {
     teams: [json.general.homeTeam.name, json.general.awayTeam.name],
     goals: [
-      Object.values(json.header.events.homeTeamGoals)
-        .flat()
-        .map((player) => ({
-          name: player.fullName,
-          ownGoal: player.ownGoal,
-          minute: player.time,
-          addedTime: player.overloadTime,
-          penalty: player.penShootoutScore,
-          assistBy: player.assistInput
-        })),
-      Object.values(json.header.events.awayTeamGoals)
-        .flat()
-        .map((player) => ({
-          name: player.fullName,
-          ownGoal: player.ownGoal,
-          minute: player.time,
-          addedTime: player.overloadTime,
-          penalty: player.penShootoutScore,
-          assistBy: player.assistInput
-        }))
+      json.header.events?.homeTeamGoals
+        ? Object.values(json.header.events.homeTeamGoals)
+            .flat()
+            .map((player) => ({
+              name: player.fullName,
+              ownGoal: player.ownGoal,
+              minute: player.time,
+              addedTime: player.overloadTime,
+              penalty: player.penShootoutScore,
+              assistBy: player.assistInput
+            }))
+        : [],
+      json.header.events?.awayTeamGoals
+        ? Object.values(json.header.events.awayTeamGoals)
+            .flat()
+            .map((player) => ({
+              name: player.fullName,
+              ownGoal: player.ownGoal,
+              minute: player.time,
+              addedTime: player.overloadTime,
+              penalty: player.penShootoutScore,
+              assistBy: player.assistInput
+            }))
+        : []
     ],
     details: {
       stadium: {
         name: json.content.matchFacts.infoBox.Stadium.name,
         capacity: json.content.matchFacts.infoBox.Stadium.capacity,
-        surface: json.content.matchFacts.infoBox.Stadium.surface
+        surface: json.content.matchFacts.infoBox.Stadium.surface as Surface
       },
       fullDate: json.header.status.utcTime,
       attendance: json.content.matchFacts.infoBox.Attendance,
@@ -55,13 +69,12 @@ export async function scrapeMatchResult(matchResponse: Response) {
             (player) => player.name
           ),
           bench: json.content.lineup.homeTeam.subs.map((player) => player.name),
-          unavailable: json.content.lineup.homeTeam?.unavailable
-            ? json.content.lineup.homeTeam?.unavailable.map((player) => ({
-                name: player.name,
-                reason: player.unavailability.type,
-                expectedReturn: player.unavailability.expectedReturn
-              }))
-            : []
+          unavailable:
+            json.content.lineup.homeTeam?.unavailable?.map((player) => ({
+              name: player.name,
+              reason: player.unavailability.type as unknown as Reason,
+              expectedReturn: player.unavailability.expectedReturn
+            })) ?? []
         },
         {
           formation: json.content.lineup.awayTeam.formation,
@@ -69,27 +82,26 @@ export async function scrapeMatchResult(matchResponse: Response) {
             (player) => player.name
           ),
           bench: json.content.lineup.awayTeam.subs.map((player) => player.name),
-          unavailable: json.content.lineup.awayTeam?.unavailable
-            ? json.content.lineup.awayTeam.unavailable.map((player) => ({
-                name: player.name,
-                reason: player.unavailability.type,
-                expectedReturn: player.unavailability.expectedReturn
-              }))
-            : []
+          unavailable:
+            json.content.lineup.awayTeam?.unavailable?.map((player) => ({
+              name: player.name,
+              reason: player.unavailability.type as unknown as Reason,
+              expectedReturn: player.unavailability.expectedReturn
+            })) ?? []
         }
       ]
     },
     matchCards: json.content.matchFacts.events.events
       .filter((event) => ['Yellow', 'Card'].includes(event.type))
       .map((event) => ({
-        name: event.fullName,
+        name: event.fullName as string,
         time: event.time,
         added: event.overloadTime,
-        card: event.card,
-        description: event.cardDescription
+        card: event.card as unknown as Card,
+        description: event.cardDescription as unknown as Description
       })),
     teamsMatchStats: Object.entries(json.content.stats.Periods).map((stat) => ({
-      period: stat[0],
+      period: stat[0] as unknown as Period,
       stats: stat[1].stats.map((childStat: AllStat) => ({
         category: childStat.title,
         stats: childStat.stats.map((data) => ({
@@ -104,8 +116,8 @@ export async function scrapeMatchResult(matchResponse: Response) {
         stats: data.stats.flatMap((data) => {
           return Object.entries(data.stats).map(([key, values]) => {
             const currentStat = {
-              category: data.key,
-              key,
+              category: data.key as unknown as StatKeyCategory,
+              key: key as unknown as Key,
               value: values.stat.value,
               total: values.stat.total
             }

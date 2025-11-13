@@ -49,15 +49,15 @@ export enum NameElement {
 }
 
 export interface League {
-  name: LeagueName
+  name: string
   id: string
   pageUrl: Link
 }
 
-export enum LeagueName {
-  FACup = 'FA Cup',
-  PremierLeague = 'Premier League'
-}
+// export enum LeagueName {
+//   FACup = 'FA Cup',
+//   PremierLeague = 'Premier League'
+// }
 
 export enum Link {
   Leagues132OverviewFaCup = '/leagues/132/overview/fa-cup',

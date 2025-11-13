@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 
 export async function writeData(filePaths: {
-  data: string
+  data: any
   dir: string
   fileName: string
 }) {
