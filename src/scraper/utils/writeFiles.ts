@@ -7,7 +7,7 @@ export async function writeData(filePaths: {
   fileName: string
 }) {
   const { data, dir, fileName } = filePaths
-  const { root } = path.parse(process.cwd())
+  const root = process.cwd()
 
   const route = path.join(root, 'football-stats', dir)
 
