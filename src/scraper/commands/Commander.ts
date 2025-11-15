@@ -74,6 +74,7 @@ export class Commands {
     await page.goto(
       `https://www.fotmob.com/leagues/${league.id}/table/${league.acrom}`
     )
+    console.log(`Starting scraping teams from ${league.name}`)
     const teamsLinks = await page.$$eval('.elydtfc1', (anchors) =>
       anchors.map((anchor) => anchor.getAttribute('href'))
     )
@@ -115,12 +116,4 @@ export class Commands {
       fileName: `/${league.acrom}-teams.json`
     })
   }
-}
-
-const leagueToScrape = LEAGUES_AVAILABLE.find(
-  (league) => league.name === 'Premier League'
-)
-
-if (leagueToScrape) {
-  await Commands.ScrapeTeams(leagueToScrape)
 }

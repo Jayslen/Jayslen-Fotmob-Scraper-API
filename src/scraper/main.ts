@@ -1,5 +1,5 @@
 import inquirer from 'inquirer'
-import { program } from 'commander'
+import { Command, program } from 'commander'
 import { Commands } from './commands/Commander.js'
 import { parseAnswers } from './utils/parseAnswers.js'
 import { LEAGUES_AVAILABLE } from './config.js'
@@ -47,9 +47,14 @@ program.action(async () => {
     ])
     const parsed = parseAnswers({ ...answers, competition })
     await Commands.ScrapeMatches({ ...parsed })
-  } else {
-    // TEAMS LOGIC
   }
+  const league = LEAGUES_AVAILABLE.find((league) => league.name === competition)
+  if (!league) throw new Error('League not found')
+  await Commands.ScrapeTeams({
+    acrom: league.acrom,
+    id: league.id,
+    name: league.name
+  })
 })
 
 program.parseAsync()
