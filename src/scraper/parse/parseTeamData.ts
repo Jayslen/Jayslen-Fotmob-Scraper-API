@@ -32,8 +32,8 @@ export async function parseTeamData(team: Response) {
       area: trophy.area,
       won: trophy.won,
       runnerup: trophy.runnerup,
-      season_won: trophy.season_won,
-      season_runnerup: trophy.season_runnerup
+      season_won: trophy.season_won[0].split(','),
+      season_runnerup: trophy.season_runnerup[0].split(',')
     })),
     stadium: {
       name: venue.widget.name,
