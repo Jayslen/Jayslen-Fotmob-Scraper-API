@@ -12,8 +12,8 @@ export async function parseTeamData(team: Response) {
   const {
     Surface,
     Capacity,
-    Openend
-  }: { Surface?: string; Capacity?: number; Openend?: number } =
+    Opened
+  }: { Surface?: string; Capacity?: number; Opened?: number } =
     Object.fromEntries(venue.statPairs)
   return {
     name: teamScrapeData.details.name,
@@ -40,7 +40,7 @@ export async function parseTeamData(team: Response) {
       city: venue.widget.city,
       capacity: Capacity,
       surface: Surface,
-      opened: Openend
+      opened: Opened
     }
   }
 }
