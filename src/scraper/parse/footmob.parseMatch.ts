@@ -5,7 +5,7 @@ import {
   parseMatchCards,
   parseMatchTeamsStats,
   parsePlayerMatchStats
-} from './parseMatchData.helpers.js'
+} from './fotmob.parseMatch.helpers.js'
 import { ScrapeMatchData } from '../types/match.Fotmob.js'
 import { League, Match, Surface } from '../types/Match.js'
 
