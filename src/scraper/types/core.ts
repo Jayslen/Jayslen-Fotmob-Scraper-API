@@ -15,7 +15,21 @@ export enum Actions {
 export enum InsertionEntity {
   Country = 'countries',
   Stadium = 'stadiums',
-  Teams = 'teams'
-  // Players,
+  Teams = 'teams',
+  Players = 'players'
   // Positions
+}
+
+export interface ScrapeMatchesInput {
+  league: { acrom: string; id: number; name: string }
+  from: number
+  to: number
+  season: string
+}
+
+export interface ScrapeTeamsInput {
+  acrom: string
+  id: number
+  name: string
+  country: string
 }

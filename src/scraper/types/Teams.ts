@@ -13,7 +13,9 @@ export interface Player {
   name: string
   birthDate: Date
   country: string
+  height: number | null
   role: Role
+  shirtNumber?: number
   transferValue?: number | null
   positions?: Position[]
 }

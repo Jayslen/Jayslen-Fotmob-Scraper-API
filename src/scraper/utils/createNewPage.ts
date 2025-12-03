@@ -1,6 +1,6 @@
 import { chromium } from 'playwright'
 
-const browser = await chromium.launch({ headless: true })
+const browser = await chromium.launch({ headless: false })
 
 export async function newPage() {
   const page = await browser.newPage()

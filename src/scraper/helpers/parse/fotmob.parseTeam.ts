@@ -1,5 +1,5 @@
 import { Response } from 'playwright'
-import { Team } from '../types/teams.Fotmob.js'
+import { Team } from '../../types/teams.Fotmob.js'
 
 export async function parseTeamData(team: Response) {
   const teamScrapeData = await team.json()
@@ -22,6 +22,8 @@ export async function parseTeamData(team: Response) {
         name: player.name,
         birthDate: player.dateOfBirth,
         country: player.cname,
+        shirtNumber: player.shirtNumber,
+        height: player.height,
         transferValue: player.transferValue,
         role: player.role.fallback,
         positions: player.positionIdsDesc?.split(',')

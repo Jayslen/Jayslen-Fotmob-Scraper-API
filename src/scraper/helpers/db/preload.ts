@@ -1,7 +1,8 @@
-import DB from '../dbInstance.js'
+import DB from '../../dbInstance.js'
 
 const countriesMap = new Map<string, string>()
 const stadiumsMap = new Map<string, string>()
+const teamsMap = new Map<string, string>()
 
 export class PreloadDB {
   static async countries(): Promise<Map<string, string>> {
@@ -32,5 +33,18 @@ export class PreloadDB {
     })
 
     return stadiumsMap
+  }
+  static async teams(refresh?: boolean): Promise<Map<string, string>> {
+    if (teamsMap.size > 0 && !refresh) {
+      return teamsMap
+    }
+    const db = await DB.getInstance()
+    const [rows] = (await db.query(
+      'SELECT BIN_TO_UUID(team_id,1) AS team_id, name FROM teams'
+    )) as [{ team_id: string; name: string }[], any]
+    rows.forEach((team) => {
+      teamsMap.set(team.name, team.team_id)
+    })
+    return teamsMap
   }
 }

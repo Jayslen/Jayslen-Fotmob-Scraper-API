@@ -1,16 +1,16 @@
 import inquirer from 'inquirer'
 import { program } from 'commander'
 import { Commands } from './commands/Commander.js'
-import { parseAnswers } from './utils/parseAnswers.js'
+import { parseAnswers } from './helpers/parse/parseAnswers.js'
 import { LEAGUES_AVAILABLE } from './config.js'
 import { Actions, InsertionEntity } from './types/core.js'
 
-// program
-//   .name('Scrape Football Results')
-//   .version('1.0.0')
-//   .description(
-//     '⚽ Welcome to Scrape Football Results! ⚽\n Get the latest scores and match data from your favorite leagues.'
-//   )
+program
+  .name('Scrape Football Results')
+  .version('1.0.0')
+  .description(
+    '⚽ Welcome to Scrape Football Results! ⚽\n Get the latest scores and match data from your favorite leagues.'
+  )
 
 console.log('⚽ Ready to scrape football data!')
 

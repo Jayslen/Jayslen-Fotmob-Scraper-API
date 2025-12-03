@@ -43,5 +43,17 @@ export const dbTableInfo: Record<
   teams: {
     table: 'teams',
     columns: ['team_id', 'name', 'country_id', 'stadium_id']
+  },
+  players: {
+    table: 'players',
+    columns: [
+      'player_id',
+      'player_name',
+      'shirt_number',
+      'height',
+      'market_value',
+      'team_id',
+      'country_id'
+    ]
   }
 }
