@@ -10,7 +10,8 @@ const { Country, Stadium, Teams, Players } = InsertionEntity
 export async function handleInsertion(
   insertion: InsertionEntity,
   table: string,
-  columns: string[]
+  columns: string[],
+  dependenciesTables?: Record<string, { table: string; columns: string[] }>
 ) {
   const data = await loadTeamsData()
   switch (insertion) {
@@ -50,20 +51,48 @@ export async function handleInsertion(
     case Players: {
       const teamsDB = await PreloadDB.teams()
       const countriesDb = await PreloadDB.countries()
-      const players = data
-        .flatMap((team) =>
-          team.players.map((pl) => ({ ...pl, team: team.name }))
+      const players = data.flatMap((team) =>
+        team.players.map((pl) => ({ ...pl, team: team.name }))
+      )
+      const playersValues = players.map((pl) => [
+        `UUID_TO_BIN('${randomUUID()}',1)`,
+        scapeQuote(pl.name),
+        pl.shirtNumber ?? 'NULL',
+        pl.height ?? 'NULL',
+        pl.transferValue ?? 'NULL',
+        `UUID_TO_BIN('${teamsDB.get(pl.team)}',1)`,
+        `UUID_TO_BIN('${countriesDb.get(pl.country)}',1)`
+      ])
+      await insertValues(table, columns, playersValues, insertion)
+      if (dependenciesTables) {
+        const { positions, playerPositions } = dependenciesTables
+        const positionsValues = [
+          ...new Set(players.flatMap((pl) => pl.positions).filter((pos) => pos))
+        ].map((pos) => [`UUID_TO_BIN('${randomUUID()}',1)`, pos])
+        await insertValues(
+          positions.table,
+          positions.columns,
+          positionsValues,
+          'positions'
         )
-        .map((pl) => [
-          `UUID_TO_BIN('${randomUUID()}',1)`,
-          scapeQuote(pl.name),
-          pl.shirtNumber ?? 'NULL',
-          pl.height ?? 'NULL',
-          pl.transferValue ?? 'NULL',
-          `UUID_TO_BIN('${teamsDB.get(pl.team)}',1)`,
-          `UUID_TO_BIN('${countriesDb.get(pl.country)}',1)`
-        ])
-      return await insertValues(table, columns, players, insertion)
+        const positionsDB = await PreloadDB.positions()
+        const playersDB = await PreloadDB.players()
+
+        const playerPositionsValues = players
+          .flatMap((pl) =>
+            pl.positions?.map((pos) => [
+              `UUID_TO_BIN('${playersDB.get(pl.name)}',1)`,
+              `UUID_TO_BIN('${positionsDB.get(pos)}',1)`
+            ])
+          )
+          .filter((value) => value)
+        await insertValues(
+          playerPositions.table,
+          playerPositions.columns,
+          playerPositionsValues,
+          'playerPositions'
+        )
+      }
     }
   }
 }

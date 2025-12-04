@@ -6,8 +6,8 @@ import { InsertionEntity } from '../types/core.js'
 export async function InsertionDB(entities: InsertionEntity[]) {
   const db = await DB.getInstance()
   for (const entity of entities) {
-    const { table, columns } = dbTableInfo[entity]
-    await handleInsertion(entity, table, columns)
+    const { table, columns, dependenciesTables } = dbTableInfo[entity]
+    await handleInsertion(entity, table, columns, dependenciesTables)
   }
   await db.end()
 }
